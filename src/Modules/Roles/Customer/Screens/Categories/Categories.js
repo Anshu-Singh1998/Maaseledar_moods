@@ -1,321 +1,167 @@
-import React, { useState } from "react";
+import React from 'react';
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   TextInput,
   FlatList,
-  StyleSheet
-} from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-const COLORS = {
-  primary: "#4F46E5",
-  background: "#F9FAFB",
-  card: "#FFFFFF",
-  text: "#111827",
-  subtext: "#6B7280",
-};
+// ✅ YOUR COLORS FILE
+import colors from '../../../../../Constants/Colors';
 
-// ================= DASHBOARD =================
-const categories = [
-  { id: "1", name: "Food" },
-  { id: "2", name: "Electronics" },
-  { id: "3", name: "Fashion" },
-  { id: "4", name: "Home" },
-  { id: "5", name: "Beauty" },
+// 🔥 MORE CATEGORIES
+const categoriesData = [
+  { id: '1', name: 'Food', icon: 'fast-food-outline' },
+  { id: '2', name: 'Electronics', icon: 'phone-portrait-outline' },
+  { id: '3', name: 'Fashion', icon: 'shirt-outline' },
+  { id: '4', name: 'Home', icon: 'home-outline' },
+  { id: '5', name: 'Beauty', icon: 'heart-outline' },
+  { id: '6', name: 'Sports', icon: 'basketball-outline' },
+  { id: '7', name: 'Books', icon: 'book-outline' },
+  { id: '8', name: 'Toys', icon: 'game-controller-outline' },
+  { id: '9', name: 'Grocery', icon: 'cart-outline' },
+  { id: '10', name: 'Furniture', icon: 'bed-outline' },
+  { id: '11', name: 'Jewelry', icon: 'diamond-outline' },
+  { id: '12', name: 'Appliances', icon: 'tv-outline' },
 ];
 
-const products = [
-  { id: "1", name: "Smart Watch", price: 99 },
-  { id: "2", name: "Headphones", price: 149 },
-  { id: "3", name: "Shoes", price: 79 },
-  { id: "4", name: "Bag", price: 59 },
-];
+const CategoriesScreen = ({ navigation }) => {
+  const renderItem = ({ item }) => (
+    <TouchableOpacity style={styles.card} activeOpacity={0.8}>
+      <View style={styles.iconBox}>
+        <Icon name={item.icon} size={26} color={colors.orange} />
+      </View>
 
-const Dashboard = () => {
-  const [search, setSearch] = useState("");
-
-  const renderCategory = ({ item }) => (
-    <TouchableOpacity style={styles.categoryCard}>
-      <Text style={styles.categoryText}>{item.name}</Text>
-    </TouchableOpacity>
-  );
-
-  const renderProduct = (item) => (
-    <TouchableOpacity style={styles.productCard} key={item.id}>
-      <View style={styles.productImage} />
-      <Text style={styles.productName}>{item.name}</Text>
-      <Text style={styles.productPrice}>${item.price}</Text>
+      <Text style={styles.text}>{item.name}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" />
+
+      {/* 🔥 FIXED HEADER */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>Hi, Anshu 👋</Text>
-          <Text style={styles.subtitle}>Find your products</Text>
-        </View>
-        <Icon name="notifications-outline" size={24} color={COLORS.text} />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        <Text style={styles.headerTitle}>Categories</Text>
+
+        <View style={{ width: 24 }} />
       </View>
 
-      <View style={styles.searchBar}>
-        <Icon name="search" size={20} color={COLORS.subtext} />
-        <TextInput
-          placeholder="Search products..."
-          value={search}
-          onChangeText={setSearch}
-          style={styles.searchInput}
+      {/* 📱 CONTENT */}
+      <View style={styles.content}>
+        {/* 🔍 SEARCH */}
+        <View style={styles.searchBar}>
+          <Icon name="search" size={18} color={colors.textSecondary} />
+          <TextInput
+            placeholder="Search categories..."
+            placeholderTextColor={colors.textSecondary}
+            style={styles.searchInput}
+          />
+        </View>
+
+        {/* 📦 GRID */}
+        <FlatList
+          data={categoriesData}
+          keyExtractor={item => item.id}
+          renderItem={renderItem}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
         />
       </View>
-
-      <View style={styles.banner}>
-        <Text style={styles.bannerTitle}>🔥 Mega Sale</Text>
-        <Text style={styles.bannerText}>Up to 50% off</Text>
-      </View>
-
-      <Text style={styles.sectionTitle}>Categories</Text>
-      <FlatList
-        data={categories}
-        horizontal
-        keyExtractor={(item) => item.id}
-        renderItem={renderCategory}
-        showsHorizontalScrollIndicator={false}
-        style={{ marginTop: 10 }}
-      />
-
-      <Text style={styles.sectionTitle}>Featured Products</Text>
-      <View style={styles.productGrid}>
-        {products.map(renderProduct)}
-      </View>
-
-      <Text style={styles.sectionTitle}>Deals of the Day</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {products.map((item) => (
-          <View key={item.id} style={styles.dealCard}>
-            <View style={styles.dealImage} />
-            <Text>{item.name}</Text>
-            <Text style={styles.productPrice}>${item.price}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
-// ================= CATEGORIES SCREEN =================
-const CategoriesScreen = () => {
-  const categoriesData = [
-    { id: "1", name: "Food", icon: "fast-food-outline" },
-    { id: "2", name: "Electronics", icon: "phone-portrait-outline" },
-    { id: "3", name: "Fashion", icon: "shirt-outline" },
-    { id: "4", name: "Home", icon: "home-outline" },
-    { id: "5", name: "Beauty", icon: "heart-outline" },
-    { id: "6", name: "Sports", icon: "basketball-outline" },
-  ];
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity style={catStyles.card}>
-      <Icon name={item.icon} size={28} color={COLORS.primary} />
-      <Text style={catStyles.text}>{item.name}</Text>
-    </TouchableOpacity>
-  );
-
-  return (
-    <View style={catStyles.container}>
-      <View style={catStyles.header}>
-        <Text style={catStyles.title}>Categories</Text>
-      </View>
-
-      <View style={catStyles.searchBar}>
-        <Icon name="search" size={20} color={COLORS.subtext} />
-        <TextInput placeholder="Search categories..." style={catStyles.searchInput} />
-      </View>
-
-      <FlatList
-        data={categoriesData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        numColumns={2}
-        columnWrapperStyle={{ justifyContent: "space-between" }}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </View>
-  );
-};
-
-export default Dashboard;
+export default CategoriesScreen;
 
 // ================= STYLES =================
+
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: COLORS.background,
-    padding: 16,
+    backgroundColor: colors.orange, // 🔥 iOS top color
   },
 
+  /* 🔥 HEADER */
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    height: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    backgroundColor: colors.orange,
   },
 
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: COLORS.text,
+  headerTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 
-  subtitle: {
-    color: COLORS.subtext,
-  },
-
-  searchBar: {
-    flexDirection: "row",
-    backgroundColor: COLORS.card,
-    padding: 12,
-    borderRadius: 12,
-    marginTop: 16,
-    alignItems: "center",
-  },
-
-  searchInput: {
-    marginLeft: 8,
+  /* 📱 CONTENT */
+  content: {
     flex: 1,
-  },
-
-  banner: {
-    height: 160,
-    backgroundColor: COLORS.primary,
-    borderRadius: 16,
-    marginTop: 16,
-    justifyContent: "center",
+    backgroundColor: colors.background,
     padding: 16,
+    marginBottom:30
   },
 
-  bannerTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-
-  bannerText: {
-    color: "#fff",
-    marginTop: 4,
-  },
-
-  sectionTitle: {
-    marginTop: 20,
-    fontWeight: "700",
-    color: COLORS.text,
-  },
-
-  categoryCard: {
-    backgroundColor: COLORS.card,
-    padding: 14,
-    borderRadius: 12,
-    marginRight: 10,
-  },
-
-  categoryText: {
-    fontWeight: "600",
-  },
-
-  productGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-
-  productCard: {
-    width: "48%",
-    backgroundColor: COLORS.card,
-    borderRadius: 16,
-    padding: 10,
-    marginBottom: 12,
-  },
-
-  productImage: {
-    height: 120,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-
-  productName: {
-    fontWeight: "600",
-  },
-
-  productPrice: {
-    color: COLORS.primary,
-    fontWeight: "700",
-  },
-
-  dealCard: {
-    backgroundColor: COLORS.card,
-    padding: 12,
-    borderRadius: 12,
-    marginRight: 10,
-    width: 140,
-  },
-
-  dealImage: {
-    height: 80,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 10,
-    marginBottom: 6,
-  },
-});
-
-// ================= CATEGORY SCREEN STYLES =================
-const catStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-    padding: 16,
-  },
-
-  header: {
-    marginBottom: 10,
-  },
-
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: COLORS.text,
-  },
-
+  /* 🔍 SEARCH */
   searchBar: {
-    flexDirection: "row",
-    backgroundColor: COLORS.card,
+    flexDirection: 'row',
+    backgroundColor: colors.background,
     padding: 12,
     borderRadius: 12,
     marginBottom: 16,
-    alignItems: "center",
+    alignItems: 'center',
+    borderColor:colors.orange,
+    borderWidth:2,
+    elevation: 2,
   },
 
   searchInput: {
     marginLeft: 8,
     flex: 1,
+    color: colors.textPrimary,
   },
 
+  /* 📦 CARD */
   card: {
-    flex: 1,
-    backgroundColor: COLORS.card,
-    padding: 20,
+    flex: 0.48,
+    backgroundColor: colors.background2,
+    paddingVertical: 22,
     borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
+    alignItems: 'center',
+    marginBottom: 14,
+
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+  },
+
+  iconBox: {
+    backgroundColor: colors.oraLight,
+    padding: 12,
+    borderRadius: 14,
   },
 
   text: {
     marginTop: 10,
-    fontWeight: "600",
-    color: COLORS.text,
+    fontWeight: '600',
+    fontSize: 13,
+    color: colors.textPrimary,
   },
 });

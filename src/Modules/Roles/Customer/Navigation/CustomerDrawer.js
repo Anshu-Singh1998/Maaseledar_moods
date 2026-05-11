@@ -2,7 +2,7 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import CustomerTabs from './CustomerStack'; // your bottom tab stack
+import CustomerTabs, { SettingStack } from './CustomerStack'; // your bottom tab stack
 
 // Screens / Stacks
 import {
@@ -117,7 +117,7 @@ const CustomerDrawer = () => {
       {/* ⚙️ SETTINGS */}
       <Drawer.Screen
         name="Settings"
-        component={CustomerSettings}
+        component={SettingStack}
         options={{
           drawerIcon: ({ color, size }) => (
             <Icon name="settings-outline" size={size} color={color} />

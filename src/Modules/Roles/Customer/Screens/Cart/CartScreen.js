@@ -6,16 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  StatusBar,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const COLORS = {
-  primary: "#4F46E5",
-  background: "#F9FAFB",
-  card: "#FFFFFF",
-  text: "#111827",
-  subtext: "#6B7280",
-};
+import colors from "../../../../../Constants/Colors";
 
 const INITIAL_CART = [
   {
@@ -69,171 +65,216 @@ const CartScreen = ({ navigation }) => {
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.price}>₹{item.price}</Text>
 
+        {/* 🔢 Quantity */}
         <View style={styles.qtyRow}>
           <TouchableOpacity
             onPress={() => updateQty(item.id, "dec")}
             style={styles.qtyBtn}
           >
-            <Icon name="remove" size={18} />
+            <Icon name="remove" size={16} color={colors.orange} />
           </TouchableOpacity>
 
-          <Text style={{ marginHorizontal: 10 }}>{item.qty}</Text>
+          <Text style={styles.qtyText}>{item.qty}</Text>
 
           <TouchableOpacity
             onPress={() => updateQty(item.id, "inc")}
             style={styles.qtyBtn}
           >
-            <Icon name="add" size={18} />
+            <Icon name="add" size={16} color={colors.orange} />
           </TouchableOpacity>
         </View>
       </View>
 
+      {/* 🗑 Delete */}
       <TouchableOpacity onPress={() => removeItem(item.id)}>
-        <Icon name="trash-outline" size={22} color="#EF4444" />
+        <Icon name="trash-outline" size={20} color={colors.error} />
       </TouchableOpacity>
     </View>
   );
 
+  /* ❌ EMPTY CART */
   if (cart.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Icon name="cart-outline" size={80} color="#9CA3AF" />
-        <Text style={styles.emptyText}>Your cart is empty</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+        <StatusBar barStyle="dark-content" />
 
-        <TouchableOpacity
-          style={styles.shopBtn}
-          onPress={() => navigation.navigate("Dashboard")}
-        >
-          <Text style={{ color: "#fff", fontWeight: "600" }}>
-            Start Shopping
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.emptyContainer}>
+          <Icon name="cart-outline" size={80} color={colors.textSecondary} />
+          <Text style={styles.emptyText}>Your cart is empty</Text>
+
+          <TouchableOpacity
+            style={styles.shopBtn}
+            onPress={() => navigation.navigate("Dashboard")}
+          >
+            <Text style={styles.shopText}>Start Shopping</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>My Cart</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.orange }}>
+      <StatusBar barStyle="light-content" />
 
-      <FlatList
-        data={cart}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      />
+      {/* 🔥 HEADER */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={22} color="#fff" />
+        </TouchableOpacity>
 
-      {/* Bottom Summary */}
+        <Text style={styles.headerTitle}>My Cart</Text>
+
+        <View style={{ width: 24 }} />
+      </View>
+
+      {/* 📱 CONTENT */}
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <FlatList
+          data={cart}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+
+      {/* 💰 BOTTOM BAR */}
       <View style={styles.bottomBar}>
         <View>
-          <Text style={styles.subtext}>Subtotal: ₹{subtotal}</Text>
-          <Text style={styles.subtext}>Discount: ₹{discount}</Text>
-          <Text style={styles.total}>Total: ₹{total}</Text>
+          <Text style={styles.subtext}>Subtotal ₹{subtotal}</Text>
+          <Text style={styles.subtext}>Discount ₹{discount}</Text>
+          <Text style={styles.total}>₹{total}</Text>
         </View>
 
         <TouchableOpacity
           style={styles.checkoutBtn}
           onPress={() => navigation.navigate("Address")}
         >
-          <Text style={{ color: "#fff", fontWeight: "700" }}>
-            Checkout
-          </Text>
+          <Text style={styles.checkoutText}>Checkout</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default CartScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-    padding: 16,
+  /* 🔥 HEADER */
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: colors.orange,
   },
 
-  title: {
-    fontSize: 20,
+  headerTitle: {
+    color: "#fff",
+    fontSize: 16,
     fontWeight: "700",
-    marginBottom: 10,
-    color: COLORS.text,
   },
 
+  /* 📦 CARD */
   card: {
     flexDirection: "row",
-    backgroundColor: COLORS.card,
+    backgroundColor: colors.background2,
     padding: 12,
-    borderRadius: 12,
-    marginBottom: 10,
+    borderRadius: 14,
+    marginBottom: 14,
     alignItems: "center",
+
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
 
   image: {
-    width: 70,
-    height: 70,
-    borderRadius: 10,
+    width: 75,
+    height: 75,
+    borderRadius: 12,
   },
 
   details: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 12,
   },
 
   name: {
     fontWeight: "600",
-    color: COLORS.text,
+    fontSize: 14,
+    color: colors.textPrimary,
   },
 
   price: {
-    color: COLORS.subtext,
+    color: colors.textSecondary,
     marginVertical: 4,
   },
 
+  /* 🔢 QTY */
   qtyRow: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 6,
   },
 
   qtyBtn: {
-    backgroundColor: "#E5E7EB",
-    padding: 5,
-    borderRadius: 6,
+    backgroundColor: colors.oraLight,
+    padding: 6,
+    borderRadius: 8,
   },
 
+  qtyText: {
+    marginHorizontal: 10,
+    fontWeight: "600",
+  },
+
+  /* 💰 BOTTOM BAR */
   bottomBar: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: COLORS.card,
+    backgroundColor: "#fff",
     padding: 16,
     borderTopWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+
+    elevation: 10,
   },
 
   subtext: {
-    color: COLORS.subtext,
+    color: colors.textSecondary,
     fontSize: 12,
   },
 
   total: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "700",
-    color: COLORS.text,
+    color: colors.orange,
     marginTop: 4,
   },
 
   checkoutBtn: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.orange,
     paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    paddingHorizontal: 24,
+    borderRadius: 12,
   },
 
+  checkoutText: {
+    color: "#fff",
+    fontWeight: "700",
+  },
+
+  /* 🛒 EMPTY */
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
@@ -243,14 +284,19 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: 10,
     fontSize: 16,
-    color: COLORS.subtext,
+    color: colors.textSecondary,
   },
 
   shopBtn: {
     marginTop: 20,
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.orange,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
+  },
+
+  shopText: {
+    color: "#fff",
+    fontWeight: "600",
   },
 });

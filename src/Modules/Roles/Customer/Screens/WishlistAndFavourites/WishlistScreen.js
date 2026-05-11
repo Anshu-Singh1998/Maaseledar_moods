@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,132 +6,173 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-} from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
+  StatusBar,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-const COLORS = {
-  primary: "#4F46E5",
-  background: "#F9FAFB",
-  card: "#FFFFFF",
-  text: "#111827",
-  subtext: "#6B7280",
-};
+import colors from '../../../../../Constants/Colors';
 
 const INITIAL_WISHLIST = [
   {
-    id: "1",
-    name: "Wireless Headphones",
+    id: '1',
+    name: 'Wireless Headphones',
     price: 120,
-    image: "https://via.placeholder.com/150",
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=200',
   },
   {
-    id: "2",
-    name: "Smart Watch",
+    id: '2',
+    name: 'Smart Watch',
     price: 180,
-    image: "https://via.placeholder.com/150",
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=200',
   },
 ];
 
 const WishlistScreen = ({ navigation }) => {
   const [wishlist, setWishlist] = useState(INITIAL_WISHLIST);
 
-  const removeItem = (id) => {
-    setWishlist(wishlist.filter((item) => item.id !== id));
+  const removeItem = id => {
+    setWishlist(wishlist.filter(item => item.id !== id));
   };
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
+      {/* ❤️ REMOVE */}
+      <TouchableOpacity
+        style={styles.heartBtn}
+        onPress={() => removeItem(item.id)}
+      >
+        <Icon name="heart" size={18} color="#fff" />
+      </TouchableOpacity>
+
+      {/* 🖼 IMAGE */}
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate("ProductDetails", { productId: item.id })
+          navigation.navigate('ProductDetails', { productId: item.id })
         }
       >
         <Image source={{ uri: item.image }} style={styles.image} />
       </TouchableOpacity>
 
+      {/* 📦 CONTENT */}
       <View style={styles.content}>
         <Text style={styles.name} numberOfLines={2}>
           {item.name}
         </Text>
+
         <Text style={styles.price}>₹{item.price}</Text>
 
-        <View style={styles.actions}>
-          <TouchableOpacity
-            style={styles.cartBtn}
-            onPress={() => navigation.navigate("Cart")}
-          >
-            <Text style={styles.btnText}>Add to Cart</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => removeItem(item.id)}>
-            <Icon name="heart" size={22} color="#EF4444" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.cartBtn}
+          onPress={() => navigation.navigate('Cart')}
+        >
+          <Text style={styles.btnText}>Add to Cart</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 
+  /* ❌ EMPTY STATE */
   if (wishlist.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Icon name="heart-outline" size={80} color="#9CA3AF" />
-        <Text style={styles.emptyText}>Your wishlist is empty</Text>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+        <StatusBar barStyle="dark-content" />
 
-        <TouchableOpacity
-          style={styles.shopBtn}
-          onPress={() => navigation.navigate("Dashboard")}
-        >
-          <Text style={{ color: "#fff", fontWeight: "600" }}>
-            Start Shopping
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.emptyContainer}>
+          <Icon name="heart-outline" size={80} color={colors.textSecondary} />
+          <Text style={styles.emptyText}>Your wishlist is empty</Text>
+
+          <TouchableOpacity
+            style={styles.shopBtn}
+            onPress={() => navigation.navigate('Dashboard')}
+          >
+            <Text style={styles.shopText}>Start Shopping</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Wishlist</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" />
 
-      <FlatList
-        data={wishlist}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        numColumns={2}
-        columnWrapperStyle={{ justifyContent: "space-between" }}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </View>
+      {/* 🔥 FIXED HEADER */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        <Text style={styles.headerTitle}>Wishlist</Text>
+
+        <View style={{ width: 24 }} />
+      </View>
+
+      {/* 📱 CONTENT */}
+      <View style={styles.contentArea}>
+        <FlatList
+          data={wishlist}
+          keyExtractor={item => item.id}
+          renderItem={renderItem}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 export default WishlistScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  /* 🔥 SAFE AREA */
+  safeArea: {
     flex: 1,
-    backgroundColor: COLORS.background,
-    padding: 16,
+    backgroundColor: colors.orange,
   },
 
-  title: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 10,
-    color: COLORS.text,
+  /* 🔥 HEADER */
+  header: {
+    height: 60,
+    backgroundColor: colors.orange,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
 
+  headerTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+
+  /* 📱 CONTENT */
+  contentArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+
+  /* 📦 CARD */
   card: {
-    backgroundColor: COLORS.card,
-    borderRadius: 12,
-    width: "48%",
-    marginBottom: 12,
-    overflow: "hidden",
+    backgroundColor: colors.pale,
+    borderRadius: 16,
+    width: '48%',
+    marginBottom: 14,
+    overflow: 'hidden',
+
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
 
   image: {
-    width: "100%",
-    height: 120,
+    width: '100%',
+    height: 130,
   },
 
   content: {
@@ -139,52 +180,65 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontWeight: "600",
-    color: COLORS.text,
+    fontWeight: '600',
+    fontSize: 13,
+    color: colors.textPrimary,
   },
 
   price: {
-    color: COLORS.subtext,
-    marginVertical: 4,
+    color: colors.orange,
+    fontWeight: '700',
+    marginVertical: 6,
   },
 
-  actions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 8,
+  /* ❤️ FLOATING HEART */
+  heartBtn: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: colors.orange,
+    padding: 6,
+    borderRadius: 20,
+    zIndex: 10,
   },
 
+  /* 🛒 BUTTON */
   cartBtn: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 6,
+    backgroundColor: colors.orange,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
   },
 
   btnText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 
+  /* 🛒 EMPTY */
   emptyContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   emptyText: {
     marginTop: 10,
     fontSize: 16,
-    color: COLORS.subtext,
+    color: colors.textSecondary,
   },
 
   shopBtn: {
     marginTop: 20,
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.orange,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
+  },
+
+  shopText: {
+    color: '#fff',
+    fontWeight: '600',
   },
 });

@@ -5,51 +5,30 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const COLORS = {
-  primary: "#4F46E5",
-  background: "#F9FAFB",
-  card: "#FFFFFF",
-  text: "#111827",
-  subtext: "#6B7280",
-};
+// ✅ Use your colors file
+import colors from "../../../../../Constants/Colors";
 
 const ORDERS = [
-  {
-    id: "1001",
-    date: "25 Mar 2026",
-    status: "Delivered",
-    total: 450,
-    items: 3,
-  },
-  {
-    id: "1002",
-    date: "20 Mar 2026",
-    status: "Processing",
-    total: 1200,
-    items: 5,
-  },
-  {
-    id: "1003",
-    date: "18 Mar 2026",
-    status: "Cancelled",
-    total: 300,
-    items: 2,
-  },
+  { id: "1001", date: "25 Mar 2026", status: "Delivered", total: 450, items: 3 },
+  { id: "1002", date: "20 Mar 2026", status: "Processing", total: 1200, items: 5 },
+  { id: "1003", date: "18 Mar 2026", status: "Cancelled", total: 300, items: 2 },
 ];
 
 const getStatusColor = (status) => {
   switch (status) {
     case "Delivered":
-      return "#16A34A";
+      return colors.success;
     case "Processing":
-      return "#F59E0B";
+      return colors.warning;
     case "Cancelled":
-      return "#EF4444";
+      return colors.error;
     default:
-      return "#6B7280";
+      return colors.textSecondary;
   }
 };
 
@@ -57,21 +36,15 @@ const OrderListScreen = ({ navigation }) => {
   const renderOrder = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
+      activeOpacity={0.8}
       onPress={() =>
         navigation.navigate("OrderDetails", { orderId: item.id })
       }
     >
+      {/* 🔝 TOP ROW */}
       <View style={styles.rowBetween}>
         <Text style={styles.orderId}>Order #{item.id}</Text>
-        <Text style={styles.date}>{item.date}</Text>
-      </View>
 
-      <View style={styles.rowBetween}>
-        <Text style={styles.sub}>{item.items} Items</Text>
-        <Text style={styles.total}>₹{item.total}</Text>
-      </View>
-
-      <View style={styles.rowBetween}>
         <View
           style={[
             styles.statusBadge,
@@ -87,84 +60,131 @@ const OrderListScreen = ({ navigation }) => {
             {item.status}
           </Text>
         </View>
+      </View>
 
-        <Icon name="chevron-forward-outline" size={20} color="#9CA3AF" />
+      {/* 📅 DATE */}
+      <Text style={styles.date}>{item.date}</Text>
+
+      {/* 📦 DETAILS */}
+      <View style={styles.rowBetween}>
+        <Text style={styles.sub}>{item.items} items</Text>
+        <Text style={styles.total}>₹{item.total}</Text>
+      </View>
+
+      {/* ➡️ ARROW */}
+      <View style={styles.arrow}>
+        <Icon name="chevron-forward" size={18} color={colors.textSecondary} />
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>My Orders</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.orange }}>
+      <StatusBar barStyle="light-content" />
 
-      <FlatList
-        data={ORDERS}
-        keyExtractor={(item) => item.id}
-        renderItem={renderOrder}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </View>
+      {/* 🔥 HEADER */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        <Text style={styles.headerTitle}>My Orders</Text>
+
+        <View style={{ width: 24 }} />
+      </View>
+
+      {/* 📱 CONTENT */}
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <FlatList
+          data={ORDERS}
+          keyExtractor={(item) => item.id}
+          renderItem={renderOrder}
+          contentContainerStyle={{ padding: 16, paddingBottom: 30 }}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 export default OrderListScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-    padding: 16,
-  },
-
+  /* 🔥 HEADER */
   header: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 10,
-    color: COLORS.text,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: colors.orange,
   },
 
+  headerTitle: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+
+  /* 📦 CARD */
   card: {
-    backgroundColor: COLORS.card,
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 2,
+    backgroundColor: colors.background2,
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
 
   rowBetween: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 4,
     alignItems: "center",
   },
 
   orderId: {
     fontWeight: "700",
-    color: COLORS.text,
+    fontSize: 14,
+    color: colors.textPrimary,
   },
 
   date: {
-    color: COLORS.subtext,
     fontSize: 12,
+    color: colors.textSecondary,
+    marginVertical: 6,
   },
 
   sub: {
-    color: COLORS.subtext,
+    color: colors.textSecondary,
+    fontSize: 13,
   },
 
   total: {
     fontWeight: "700",
-    color: COLORS.text,
+    fontSize: 15,
+    color: colors.orange,
   },
 
+  /* 🏷 STATUS */
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 20,
   },
 
   statusText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "600",
+  },
+
+  /* ➡️ */
+  arrow: {
+    position: "absolute",
+    right: 12,
+    top: "45%",
   },
 });

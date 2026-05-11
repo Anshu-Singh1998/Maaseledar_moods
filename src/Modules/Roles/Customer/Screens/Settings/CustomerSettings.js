@@ -1,213 +1,301 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  Switch,
+  FlatList,
   TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
+  TextInput,
+  StyleSheet,
+  Modal,
+  StatusBar,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
+import CustomHeader from "../../../../Components/Header/CustomHeader"
+import colors from '../../../../../Constants/Colors';
 
-const COLORS = {
-  primary: "#4F46E5",
-  background: "#F9FAFB",
-  card: "#FFFFFF",
-  text: "#111827",
-  subtext: "#6B7280",
-  danger: "#EF4444",
-};
+const INITIAL_ADDRESSES = [
+  {
+    id: '1',
+    name: 'Anshu Singh',
+    phone: '9999999999',
+    address: 'Salt Lake, Kolkata, West Bengal',
+  },
+  {
+    id: '2',
+    name: 'Home',
+    phone: '8888888888',
+    address: 'Park Street, Kolkata',
+  },
+];
 
-const CustomerSettingsScreen = ({ navigation }) => {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [locationEnabled, setLocationEnabled] = useState(true);
+const AddressScreen = ({ navigation }) => {
+  const [addresses, setAddresses] = useState(INITIAL_ADDRESSES);
+  const [selectedId, setSelectedId] = useState('1');
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLogout = () => {
-    // 🔌 Clear auth tokens here
-    console.log("User logged out");
-    navigation.replace("Login"); // adjust based on your auth flow
+  const [form, setForm] = useState({
+    name: '',
+    phone: '',
+    address: '',
+  });
+
+  const handleAddAddress = () => {
+    if (!form.name || !form.phone || !form.address) return;
+
+    const newAddress = {
+      id: Date.now().toString(),
+      ...form,
+    };
+
+    setAddresses([...addresses, newAddress]);
+    setForm({ name: '', phone: '', address: '' });
+    setModalVisible(false);
   };
 
-  const SettingItem = ({ icon, title, subtitle, rightComponent, onPress }) => (
-    <TouchableOpacity style={styles.item} onPress={onPress}>
-      <View style={styles.itemLeft}>
-        <Icon name={icon} size={22} color={COLORS.primary} />
-        <View style={{ marginLeft: 12 }}>
-          <Text style={styles.itemTitle}>{title}</Text>
-          {subtitle && <Text style={styles.itemSubtitle}>{subtitle}</Text>}
+  const renderAddress = ({ item }) => (
+    <TouchableOpacity
+      style={[styles.card, selectedId === item.id && styles.selectedCard]}
+      onPress={() => setSelectedId(item.id)}
+      activeOpacity={0.8}
+    >
+      <View style={styles.row}>
+        <Icon
+          name={selectedId === item.id ? 'radio-button-on' : 'radio-button-off'}
+          size={20}
+          color={colors.orange}
+        />
+
+        <View style={{ marginLeft: 12, flex: 1 }}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.sub}>{item.phone}</Text>
+          <Text style={styles.sub}>{item.address}</Text>
         </View>
+
+        <Icon name="create-outline" size={18} color={colors.textSecondary} />
       </View>
-      {rightComponent}
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Settings</Text>
+    <SafeAreaView style={styles.safeArea}>
+     
 
-      {/* Account Section */}
-      <Text style={styles.sectionTitle}>Account</Text>
+      {/* 🔥 HEADER */}
+      <CustomHeader title="Settings" navigation={navigation} />
 
-      <View style={styles.card}>
-        <SettingItem
-          icon="person-outline"
-          title="Edit Profile"
-          subtitle="Update your personal info"
-          onPress={() => navigation.navigate("EditProfile")}
-        />
-
-        <SettingItem
-          icon="location-outline"
-          title="Manage Addresses"
-          subtitle="Add or edit delivery addresses"
-          onPress={() => navigation.navigate("Address")}
-        />
-
-        <SettingItem
-          icon="lock-closed-outline"
-          title="Change Password"
-          subtitle="Update your account password"
-          onPress={() => console.log("Change Password")}
+      {/* 📦 CONTENT */}
+      <View style={styles.contentArea}>
+        <FlatList
+          data={addresses}
+          keyExtractor={item => item.id}
+          renderItem={renderAddress}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            padding: 16,
+            paddingBottom: 120,
+          }}
         />
       </View>
 
-      {/* Preferences */}
-      <Text style={styles.sectionTitle}>Preferences</Text>
-
-      <View style={styles.card}>
-        <SettingItem
-          icon="notifications-outline"
-          title="Notifications"
-          rightComponent={
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={setNotificationsEnabled}
-            />
-          }
-        />
-
-        <SettingItem
-          icon="moon-outline"
-          title="Dark Mode"
-          rightComponent={
-            <Switch value={darkMode} onValueChange={setDarkMode} />
-          }
-        />
-
-        <SettingItem
-          icon="location-outline"
-          title="Location Services"
-          rightComponent={
-            <Switch
-              value={locationEnabled}
-              onValueChange={setLocationEnabled}
-            />
-          }
-        />
+      {/* 🔥 CONTINUE BUTTON */}
+      <View style={styles.bottomBar}>
+        <TouchableOpacity
+          style={styles.checkoutBtn}
+          onPress={() => navigation.navigate('Checkout')}
+        >
+          <Text style={styles.checkoutText}>Continue to Checkout</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Support */}
-      <Text style={styles.sectionTitle}>Support</Text>
-
-      <View style={styles.card}>
-        <SettingItem
-          icon="help-circle-outline"
-          title="Help Center"
-          onPress={() => console.log("Help")}
-        />
-
-        <SettingItem
-          icon="document-text-outline"
-          title="Terms & Conditions"
-          onPress={() => console.log("Terms")}
-        />
-
-        <SettingItem
-          icon="shield-checkmark-outline"
-          title="Privacy Policy"
-          onPress={() => console.log("Privacy")}
-        />
-      </View>
-
-      {/* Logout */}
-      <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-        <Icon name="log-out-outline" size={20} color="#fff" />
-        <Text style={styles.logoutText}>Logout</Text>
+      {/* ✏️ FLOATING BUTTON */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => setModalVisible(true)}
+      >
+        <Icon name="pencil" size={20} color="#fff" />
       </TouchableOpacity>
-    </ScrollView>
+
+      {/* 🧾 MODAL */}
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Add New Address</Text>
+
+            <TextInput
+              placeholder="Full Name"
+              value={form.name}
+              onChangeText={t => setForm({ ...form, name: t })}
+              style={styles.input}
+              placeholderTextColor={colors.textSecondary}
+            />
+
+            <TextInput
+              placeholder="Phone Number"
+              keyboardType="phone-pad"
+              value={form.phone}
+              onChangeText={t => setForm({ ...form, phone: t })}
+              style={styles.input}
+              placeholderTextColor={colors.textSecondary}
+            />
+
+            <TextInput
+              placeholder="Full Address"
+              value={form.address}
+              onChangeText={t => setForm({ ...form, address: t })}
+              style={[styles.input, { height: 90 }]}
+              multiline
+              placeholderTextColor={colors.textSecondary}
+            />
+
+            <TouchableOpacity style={styles.saveBtn} onPress={handleAddAddress}>
+              <Text style={styles.saveText}>Save Address</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.cancel}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 };
 
-export default CustomerSettingsScreen;
+export default AddressScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  /* 🔥 SAFE AREA (MATCH SETTINGS SCREEN) */
+  safeArea: {
     flex: 1,
-    backgroundColor: COLORS.background,
-    padding: 16,
+    backgroundColor: colors.orange,
   },
 
-  header: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: COLORS.text,
-    marginBottom: 16,
+  
+
+
+  /* 📦 CONTENT */
+  contentArea: {
+    flex: 1,
+    backgroundColor: colors.background,
   },
 
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: COLORS.subtext,
-    marginTop: 20,
-    marginBottom: 8,
-  },
-
+  /* 📍 ADDRESS CARD */
   card: {
-    backgroundColor: COLORS.card,
-    borderRadius: 12,
-    paddingVertical: 5,
+    backgroundColor: colors.background2,
+    padding: 14,
+    borderRadius: 14,
+    marginBottom: 12,
+
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
   },
 
-  item: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+  selectedCard: {
+    borderWidth: 2,
+    borderColor: colors.orange,
   },
 
-  itemLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
-  itemTitle: {
-    fontSize: 15,
-    fontWeight: "500",
-    color: COLORS.text,
+  name: {
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
 
-  itemSubtitle: {
+  sub: {
     fontSize: 12,
-    color: COLORS.subtext,
+    color: colors.textSecondary,
   },
 
-  logoutBtn: {
-    marginTop: 30,
-    backgroundColor: COLORS.danger,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+  /* 🔥 FAB */
+  fab: {
+    position: 'absolute',
+    bottom: 90,
+    right: 20,
+    backgroundColor: colors.orange,
+    width: 55,
+    height: 55,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+  },
+
+  /* 🔥 BOTTOM BAR */
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.background2,
+    padding: 16,
+    borderTopWidth: 1,
+    borderColor: colors.border,
+  },
+
+  checkoutBtn: {
+    backgroundColor: colors.orange,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+
+  checkoutText: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+
+  /* 🔥 MODAL */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 15,
+    color: colors.textPrimary,
+  },
+
+  input: {
+    backgroundColor: colors.oraLight,
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+
+  saveBtn: {
+    backgroundColor: colors.orange,
     padding: 14,
     borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
   },
 
-  logoutText: {
-    color: "#fff",
-    fontWeight: "700",
-    marginLeft: 8,
+  saveText: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+
+  cancel: {
+    textAlign: 'center',
+    marginTop: 12,
+    color: colors.textSecondary,
   },
 });

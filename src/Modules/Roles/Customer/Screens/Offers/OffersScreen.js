@@ -6,16 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  StatusBar,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const COLORS = {
-  primary: "#4F46E5",
-  background: "#F9FAFB",
-  card: "#FFFFFF",
-  text: "#111827",
-  subtext: "#6B7280",
-};
+import colors from "../../../../../Constants/Colors";
 
 const OFFERS = [
   {
@@ -41,20 +37,25 @@ const OFFERS = [
   },
 ];
 
-const OffersScreen = () => {
+const OffersScreen = ({ navigation }) => {
   const renderOffer = ({ item }) => (
     <View style={styles.card}>
+      {/* 🖼 IMAGE */}
       <Image source={{ uri: item.image }} style={styles.image} />
 
+      {/* 📦 CONTENT */}
       <View style={styles.content}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.subtitle}>{item.subtitle}</Text>
 
+        {/* 🎟 COUPON ROW */}
         <View style={styles.codeRow}>
-          <Text style={styles.code}>Code: {item.code}</Text>
+          <View style={styles.codeBox}>
+            <Text style={styles.code}>{item.code}</Text>
+          </View>
 
           <TouchableOpacity style={styles.copyBtn}>
-            <Icon name="copy-outline" size={16} color="#fff" />
+            <Icon name="copy-outline" size={14} color="#fff" />
             <Text style={styles.copyText}>Copy</Text>
           </TouchableOpacity>
         </View>
@@ -63,42 +64,78 @@ const OffersScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Offers & Deals</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" />
 
-      <FlatList
-        data={OFFERS}
-        keyExtractor={(item) => item.id}
-        renderItem={renderOffer}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
+      {/* 🔥 FIXED HEADER */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={22} color="#fff" />
+        </TouchableOpacity>
+
+        <Text style={styles.headerTitle}>Offers & Deals</Text>
+
+        <View style={{ width: 24 }} />
+      </View>
+
+      {/* 📱 CONTENT */}
+      <View style={styles.contentArea}>
+        <FlatList
+          data={OFFERS}
+          keyExtractor={(item) => item.id}
+          renderItem={renderOffer}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 export default OffersScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  /* 🔥 SAFE AREA */
+  safeArea: {
     flex: 1,
-    backgroundColor: COLORS.background,
-    padding: 16,
+    backgroundColor: colors.orange,
   },
 
+  /* 🔥 HEADER */
   header: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 10,
-    color: COLORS.text,
+    height: 60,
+    backgroundColor: colors.orange,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
   },
 
+  headerTitle: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+
+  /* 📱 CONTENT */
+  contentArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+    marginBottom:30
+  },
+
+  /* 🎟 CARD */
   card: {
-    backgroundColor: COLORS.card,
-    borderRadius: 12,
-    marginBottom: 15,
+    backgroundColor: colors.pale,
+    borderRadius: 16,
+    marginBottom: 16,
     overflow: "hidden",
-    elevation: 2,
+
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
 
   image: {
@@ -107,37 +144,49 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    padding: 12,
+    padding: 14,
   },
 
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: COLORS.text,
+    color: colors.textPrimary,
   },
 
   subtitle: {
-    color: COLORS.subtext,
+    color: colors.textSecondary,
     marginVertical: 4,
+    fontSize: 13,
   },
 
+  /* 🎟 CODE ROW */
   codeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 12,
+  },
+
+  codeBox: {
+    borderWidth: 1,
+    borderColor: colors.orange,
+    borderStyle: "dashed",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: colors.oraLight,
   },
 
   code: {
-    fontWeight: "600",
-    color: COLORS.primary,
+    fontWeight: "700",
+    color: colors.orange,
   },
 
   copyBtn: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 10,
+    backgroundColor: colors.orange,
+    paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
   },
@@ -146,5 +195,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginLeft: 5,
     fontSize: 12,
+    fontWeight: "600",
   },
 });

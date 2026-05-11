@@ -59,18 +59,18 @@ const VendorStack = () => {
         tabBarShowLabel: false,
 
         // 🔥 FLOATING TAB
-        tabBarStyle: {
+         tabBarStyle: {
           position: 'absolute',
-          bottom: moderateScale(20),
-          left: moderateScale(16),
-          right: moderateScale(16),
-          height: moderateScale(65),
+          bottom: moderateScale(0),
+          left: moderateScale(0),
+          right: moderateScale(0),
+          height: moderateScale(80),
           borderRadius: moderateScale(20),
-          backgroundColor: '#fff',
-          elevation: 10,
-          shadowColor: '#000',
-          shadowOpacity: 0.1,
-          shadowRadius: 10,
+          backgroundColor: Colors.orange,
+          elevation: 5,
+          shadowOpacity: 0.05,
+          paddingTop: 10,
+          paddingBottom: 10,
         },
 
         tabBarIcon: ({ focused }) => {
@@ -90,6 +90,31 @@ const VendorStack = () => {
               iconName = 'person';
               break;
           }
+
+//  tabBarIcon: ({ color, focused }) => {
+//           let iconName;
+
+//           switch (route.name) {
+//             case 'Home':
+//               iconName = focused ? 'home' : 'home-outline';
+//               break;
+//             case 'CategoriesTab':
+//               iconName = focused ? 'grid' : 'grid-outline';
+//               break;
+//             case 'Cart':
+//               iconName = focused ? 'cart' : 'cart-outline';
+//               break;
+//             case 'Orders':
+//               iconName = focused ? 'receipt' : 'receipt-outline';
+//               break;
+//             case 'Profile':
+//               iconName = focused ? 'person' : 'person-outline';
+//               break;
+//           }
+
+//           return <Icon name={iconName} size={24} color={color} />;
+//         },
+
 
           return (
             <View

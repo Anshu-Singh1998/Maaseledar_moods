@@ -1,31 +1,32 @@
-import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Icon from "react-native-vector-icons/Ionicons";
-import { moderateScale } from "react-native-size-matters";
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { moderateScale } from 'react-native-size-matters';
 
 // 🔹 Screens
-import Dashboard from "../Screens/Dashboard/Dashboard";
-import Categories from "../Screens/Categories/Categories";
-import CategoriesList from "../Screens/Categories/CategoryListScreen";
-import ProductList from "../Screens/Product/ProductListScreen";
-import ProductDetails from "../Screens/Product/ProductDetailsScreen";
+import Dashboard from '../Screens/Dashboard/Dashboard';
+import Categories from '../Screens/Categories/Categories';
+import CategoriesList from '../Screens/Categories/CategoryListScreen';
+import ProductList from '../Screens/Product/ProductListScreen';
+import ProductDetails from '../Screens/Product/ProductDetailsScreen';
 
-import Cart from "../Screens/Cart/CartScreen";
-import Checkout from "../Screens/Checkout/CheckoutScreen";
-import Address from "../Screens/Checkout/AddressScreen";
+import Cart from '../Screens/Cart/CartScreen';
+import Checkout from '../Screens/Checkout/CheckoutScreen';
+import Address from '../Screens/Checkout/AddressScreen';
 
-import OrdersList from "../Screens/Orders/OrderListScreen";
-import OrderDetails from "../Screens/Orders/OrderDetailsScreen";
+import OrdersList from '../Screens/Orders/OrderListScreen';
+import OrderDetails from '../Screens/Orders/OrderDetailsScreen';
 
-import Profile from "../Screens/Profile/ProfileScreen";
-import EditProfile from "../Screens/Profile/EditProfileScreen";
+import Profile from '../Screens/Profile/ProfileScreen';
+import EditProfile from '../Screens/Profile/EditProfileScreen';
 
-import Wishlist from "../Screens/WishlistAndFavourites/WishlistScreen";
-import Offers from "../Screens/Offers/OffersScreen";
+import Wishlist from '../Screens/WishlistAndFavourites/WishlistScreen';
+import Offers from '../Screens/Offers/OffersScreen';
 
 // 🔹 Theme
-import Colors from "../../../../Constants/Colors";
+import Colors from '../../../../Constants/Colors';
+import CustomerSettingsScreen from '../Screens/Settings/CustomerSettings';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -83,6 +84,23 @@ export const ProfileStack = () => {
   );
 };
 
+export const SettingStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="CustomerSettings"
+    >
+      <Stack.Screen
+        name="CustomerSettings"
+        component={CustomerSettingsScreen}
+      />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="Checkout" component={Checkout} />
+      <Stack.Screen name="Address" component={Address} />
+    </Stack.Navigator>
+  );
+};
+
 /* ================= MAIN TAB ================= */
 
 const CustomerStack = () => {
@@ -91,18 +109,18 @@ const CustomerStack = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#fff",
-        tabBarInactiveTintColor: "#D1D5DB",
+        tabBarActiveTintColor: '#fff',
+        tabBarInactiveTintColor: '#D1D5DB',
 
         // 🔥 Floating Tab Style
         tabBarStyle: {
-          position: "absolute",
-          bottom: moderateScale(20),
-          left: moderateScale(16),
-          right: moderateScale(16),
-          height: moderateScale(65),
+          position: 'absolute',
+          bottom: moderateScale(0),
+          left: moderateScale(0),
+          right: moderateScale(0),
+          height: moderateScale(80),
           borderRadius: moderateScale(20),
-          backgroundColor: Colors.primary,
+          backgroundColor: Colors.orange,
           elevation: 5,
           shadowOpacity: 0.05,
           paddingTop: 10,
@@ -113,20 +131,20 @@ const CustomerStack = () => {
           let iconName;
 
           switch (route.name) {
-            case "Home":
-              iconName = focused ? "home" : "home-outline";
+            case 'Home':
+              iconName = focused ? 'home' : 'home-outline';
               break;
-            case "CategoriesTab":
-              iconName = focused ? "grid" : "grid-outline";
+            case 'CategoriesTab':
+              iconName = focused ? 'grid' : 'grid-outline';
               break;
-            case "Cart":
-              iconName = focused ? "cart" : "cart-outline";
+            case 'Cart':
+              iconName = focused ? 'cart' : 'cart-outline';
               break;
-            case "Orders":
-              iconName = focused ? "receipt" : "receipt-outline";
+            case 'Orders':
+              iconName = focused ? 'receipt' : 'receipt-outline';
               break;
-            case "Profile":
-              iconName = focused ? "person" : "person-outline";
+            case 'Profile':
+              iconName = focused ? 'person' : 'person-outline';
               break;
           }
 
